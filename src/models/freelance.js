@@ -49,6 +49,6 @@ const freelanceSchema = new Schema({
   },
 
 
-});
+}, { timestamps: true });
 
 module.exports = model("Freelance", freelanceSchema);

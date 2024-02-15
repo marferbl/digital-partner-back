@@ -17,7 +17,7 @@ const userSchema = new Schema({
   },
   country: {
     type: String,
-    required: true,
+    required: false,
   },
   password: {
     type: String,
@@ -29,14 +29,13 @@ const userSchema = new Schema({
   },
   avatar: {
     type: String,
-    default:
-      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
+    default: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
   },
   phone: {
     type: Number,
     required: false,
-  },
+  }
+}, { timestamps: true });
 
-});
 
 module.exports = model("User", userSchema);
