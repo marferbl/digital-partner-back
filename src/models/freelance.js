@@ -47,6 +47,23 @@ const freelanceSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  study: {
+    type: Object,
+    default: {},
+  },
+  jobType: {
+    type: String,
+    default: "all",
+  },
+  onlyRemote: {
+    type: Boolean,
+    default: true,
+  },
+  hasSetup: {
+    type: Boolean,
+    default: false,
+  },
+
 
 
 }, { timestamps: true });

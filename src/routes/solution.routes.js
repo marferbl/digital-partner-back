@@ -3,15 +3,14 @@ const solutionController = require('../controllers/solution.js');
 
 const { isAuthenticated } = require("./../middleware/jwt.middleware");
 
-router.get("/by-corporate", isAuthenticated, async (req, res) => {
-    const solutions = await solutionController.getSolutionsByCorporate(req, res);
-    res.sendStatus(200).send(solutions);
+router.get("/by-corporate", isAuthenticated, (req, res) => {
+    solutionController.getSolutionsByCorporate(req, res);
 });
 
-router.post("/", isAuthenticated, async (req, res) => {
-    const solution = await solutionController.createSolution(req, res);
-    res.sendStatus(200).send(solution);
+router.post("/create", isAuthenticated, (req, res) => {
+    solutionController.createSolution(req, res);
 });
+
 
 
 

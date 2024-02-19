@@ -17,7 +17,29 @@ const solutionSchema = new Schema({
     corporate: {
         type: Schema.Types.ObjectId,
         ref: "Corporate",
-    }
+    },
+    feature: {
+        type: Array,
+        default: []
+    },
+    type: {
+        enum: ["sector", "multi"],
+        type: String,
+    },
+    website: {
+        type: String,
+        required: false,
+    },
+    countries: {
+        type: Array,
+        default: []
+    },
+    languages: {
+        type: Array,
+        default: []
+    },
+
+
 
 });
 
