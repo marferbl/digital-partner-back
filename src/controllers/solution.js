@@ -25,3 +25,24 @@ exports.createSolution = async (req, res) => {
         return { success: false, error };
     }
 }
+
+exports.getSolutionById = async (req, res) => {
+    try {
+        const solution = await
+            Solution.findOne({ _id: req.params.id });
+        res.status(200).send({ success: true, solution });
+    } catch (error) {
+        res.status(500 || 400).send({ message: 'Something went wrong', error });
+        return { success: false, error };
+    }
+}
+
+exports.getAllSolutions = async (req, res) => {
+    try {
+        const solutions = await Solution.find();
+        res.status(200).send({ success: true, solutions });
+    } catch (error) {
+        res.status(500 || 400).send({ message: 'Something went wrong', error });
+        return { success: false, error };
+    }
+}
