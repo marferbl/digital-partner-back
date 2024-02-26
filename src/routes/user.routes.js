@@ -73,7 +73,7 @@ router.post("/login", (req, res, next) => {
         res.status(401).json({ message: "User not found." });
         return;
       }
-
+      console.log(email, foundUser)
       if (bcrypt.compareSync(password, foundUser.password)) {
         const { _id, email, name, avatar } = foundUser;
 
@@ -81,7 +81,7 @@ router.post("/login", (req, res, next) => {
 
         const token = jwt.sign(payload, "secretToken", {
           algorithm: "HS256",
-          expiresIn: "6h",
+          expiresIn: "24h",
         });
 
         res.status(200).json({ token });
@@ -149,7 +149,9 @@ router.get("/verify", isAuthenticated, (req, res, next) => {
 });
 
 router.get("/me", isAuthenticated, async (req, res, next) => {
-  const user = await User.findOne({ id: req.payload._id });
+  console.log("payload", req.payload)
+  const user = await User.findOne({ _id: req.payload._id });
+  console.log("asdasd", user)
   res.status(200).json(user);
 });
 

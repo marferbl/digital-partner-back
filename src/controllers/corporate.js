@@ -3,7 +3,7 @@ const User = require('../models/user');
 
 exports.getCorporate = async (req, res) => {
     try {
-        const user = await User.findOne({ id: req.payload._id });
+        const user = await User.findOne({ _id: req.payload._id });
         const corporate = await Corporate.findOne({ superadmin: user.id });
         res.status(200).send({ success: true, corporate });
     } catch (error) {
@@ -14,7 +14,7 @@ exports.getCorporate = async (req, res) => {
 
 exports.createCorporate = async (req, res) => {
     try {
-        const user = await User.findOne({ id: req.payload._id });
+        const user = await User.findOne({ _id: req.payload._id });
         const corporate = await Corporate.create({ superadmin: user.id, ...req.body });
         res.status(200).send({ success: true, corporate });
     } catch (error) {
@@ -24,7 +24,7 @@ exports.createCorporate = async (req, res) => {
 
 exports.updateCorporate = async (req, res) => {
     try {
-        const user = await User.findOne({ id: req.payload._id });
+        const user = await User.findOne({ _id: req.payload._id });
         const corporate = await Corporate
             .findOneAndUpdate({ superadmin: user.id }, { ...req.body }, { new: true });
         res.status(200).send({ success: true, corporate });
@@ -37,7 +37,7 @@ exports.updateCorporate = async (req, res) => {
 
 exports.deleteCorporate = async (req, res) => {
     try {
-        const user = await User.findOne({ id: req.payload._id });
+        const user = await User.findOne({ _id: req.payload._id });
         const corporate = await Corporate.findOneAndRemove({ superadmin: user.id });
         return { success: true, corporate };
     } catch (error) {

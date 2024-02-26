@@ -4,7 +4,7 @@ const Solution = require('../models/solution');
 
 exports.getSolutionsByCorporate = async (req, res) => {
     try {
-        const user = await User.findOne({ id: req.payload._id });
+        const user = await User.findOne({ _id: req.payload._id });
         const corporate = await Corporate.findOne({ superadmin: user.id });
         const solutions = await Solution.find({ corporate });
         res.status(200).send({ success: true, solutions });
@@ -16,7 +16,7 @@ exports.getSolutionsByCorporate = async (req, res) => {
 
 exports.createSolution = async (req, res) => {
     try {
-        const user = await User.findOne({ id: req.payload._id });
+        const user = await User.findOne({ _id: req.payload._id });
         const corporate = await Corporate.findOne({ superadmin: user.id });
         const solution = await Solution.create({ corporate, ...req.body });
         res.status(200).send({ success: true, solution });
