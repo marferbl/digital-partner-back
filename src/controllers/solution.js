@@ -39,7 +39,20 @@ exports.getSolutionById = async (req, res) => {
 
 exports.getAllSolutions = async (req, res) => {
     try {
-        const solutions = await Solution.find();
+        const term = req.query[0];
+        let solutions = [];
+        if (!term) {
+            solutions = await Solution.find();
+        } else {
+            solutions = await Solution.find({
+                $or: [
+                    { name: { $regex: term, $options: 'i' } },
+                    { description: { $regex: term, $options: 'i' } },
+                    { feature: { $regex: term, $options: 'i' } },
+
+                ]
+            });
+        }
         res.status(200).send({ success: true, solutions });
     } catch (error) {
         res.status(500 || 400).send({ message: 'Something went wrong', error });
