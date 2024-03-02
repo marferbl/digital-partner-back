@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const Corporate = require('../models/corporate');
 const Service = require('../models/service');
 const Solution = require('../models/solution');
 
@@ -15,7 +15,8 @@ exports.getServiceByUserCorporate = async (req, res) => {
 
 exports.createService = async (req, res) => {
     try {
-        const service = await Service.create({ ...req.body, createdBy: req.payload._id });
+        const corporateById = await Corporate.findOne({ superAdmin: req.payload._id });
+        const service = await Service.create({ ...req.body, createdBy: req.payload._id, corporate: corporateById._id });
         res.status(200).send({ success: true, service });
     } catch (error) {
         res.status(500).send({ message: 'Something went wrong', error });
@@ -42,7 +43,7 @@ exports.getAllServices = async (req, res) => {
 
 exports.getServicesBySolution = async (req, res) => {
     try {
-        const services = await Service.find({ solutionId: req.params.id });
+        const services = await Service.find({ solutionId: req.params.id }).populate('corporate')
         res.status(200).send({ success: true, services });
     } catch (error) {
         res.status(500).send({ message: 'Something went wrong', error });

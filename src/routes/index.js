@@ -4,4 +4,6 @@ module.exports = (app) => {
   app.use('/solution', require('./solution.routes'))
   app.use('/freelance', require('./freelance.routes'))
   app.use('/service', require('./service.routes'))
+  app.use('/manual', require('./manual.routes'))
+  app.use('/file', require('./file.routes'))
 };

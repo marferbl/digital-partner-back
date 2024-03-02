@@ -149,9 +149,7 @@ router.get("/verify", isAuthenticated, (req, res, next) => {
 });
 
 router.get("/me", isAuthenticated, async (req, res, next) => {
-  console.log("payload", req.payload)
   const user = await User.findOne({ _id: req.payload._id });
-  console.log("asdasd", user)
   res.status(200).json(user);
 });
 

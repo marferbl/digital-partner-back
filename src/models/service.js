@@ -33,6 +33,10 @@ const serviceSchema = new Schema({
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: "User",
+  },
+  corporate: {
+    type: Schema.Types.ObjectId,
+    ref: "Corporate",
   }
 },
   { timestamps: true }
