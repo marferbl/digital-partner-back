@@ -6,6 +6,7 @@ const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const cloudinary = require("../cloudinary-config");
+const Corporate = require("../models/corporate");
 
 router.get("/", async (req, res) => {
   const userList = await User.find();
@@ -149,8 +150,14 @@ router.get("/verify", isAuthenticated, (req, res, next) => {
 });
 
 router.get("/me", isAuthenticated, async (req, res, next) => {
-  const user = await User.findOne({ _id: req.payload._id });
-  res.status(200).json(user);
+  try {
+    const user = await User.findOne({ _id: req.payload._id });
+    const corporate = await Corporate.findOne({ superadmin: user.id });
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500 || 400).send({ message: 'Something went wrong', error });
+    return { success: false, error };
+  }
 });
 
 module.exports = router;
