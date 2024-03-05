@@ -34,6 +34,10 @@ const userSchema = new Schema({
   phone: {
     type: Number,
     required: false,
+  },
+  job: {
+    type: String,
+    required: false,
   }
 }, { timestamps: true });
 
