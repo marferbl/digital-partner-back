@@ -19,11 +19,15 @@ const solutionSchema = new Schema({
         ref: "Corporate",
     },
     feature: {
-        type: Array,
-        default: []
+        type: String,
+        default: ''
     },
-    type: {
-        enum: ["sector", "multi"],
+    isVertical: {
+        type: Boolean,
+        default: false
+    },
+    sectorType: {
+        enum: ["services", "industrial", 'firstSector'],
         type: String,
     },
     website: {

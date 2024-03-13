@@ -39,7 +39,9 @@ exports.getSolutionById = async (req, res) => {
 
 exports.getAllSolutions = async (req, res) => {
     try {
-        const term = req.query[0];
+        const term = req.query.queryParams
+        const answers = req.query.answers
+        
         let solutions = [];
         if (!term) {
             solutions = await Solution.find();

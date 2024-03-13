@@ -11,7 +11,7 @@ router.post("/create", isAuthenticated, (req, res) => {
     solutionController.createSolution(req, res);
 });
 
-router.get("/details/:id", isAuthenticated, (req, res) => {
+router.get("/details/:id", (req, res) => {
     solutionController.getSolutionById(req, res);
 });
 
