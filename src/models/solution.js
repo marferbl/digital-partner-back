@@ -27,7 +27,7 @@ const solutionSchema = new Schema({
         default: false
     },
     sectorType: {
-        enum: ["services", "industrial", 'firstSector'],
+        enum: ["services", "industrial", 'firstSector', ''],
         type: String,
     },
     website: {
