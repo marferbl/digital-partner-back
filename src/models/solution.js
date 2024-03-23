@@ -42,6 +42,10 @@ const solutionSchema = new Schema({
         type: Array,
         default: []
     },
+    lineType: {
+        type: String,
+        default: 'solutions'
+    }
 
 
 

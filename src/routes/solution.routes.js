@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const solutionController = require('../controllers/solution.js');
+const searchController = require('../controllers/search.js');
 
 const { isAuthenticated } = require("./../middleware/jwt.middleware");
 
@@ -16,7 +17,8 @@ router.get("/details/:id", (req, res) => {
 });
 
 router.get("/all", (req, res) => {
-    solutionController.getAllSolutions(req, res);
+    searchController.getAllItems(req, res);
+    // solutionController.getAllSolutionsFilter(req, res);
 });
 
 

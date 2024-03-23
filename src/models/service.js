@@ -37,6 +37,10 @@ const serviceSchema = new Schema({
   corporate: {
     type: Schema.Types.ObjectId,
     ref: "Corporate",
+  },
+  lineType: {
+    type: String,
+    default: 'services'
   }
 },
   { timestamps: true }

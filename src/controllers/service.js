@@ -62,3 +62,41 @@ exports.updateService = async (req, res) => {
         res.status(500).send({ message: 'Something went wrong', error });
     }
 }
+
+exports.getAllServicesFilter = async (req, res) => {
+    try {
+        const term = req.query.term;
+        const partnerType = req.query.partnerType;
+        const languages = req.query.languages;
+        const countries = req.query.countries;
+
+        let filter = {};
+
+        if (term) {
+            filter.$or = [
+                { name: { $regex: term, $options: 'i' } },
+                { description: { $regex: term, $options: 'i' } },
+                { web: { $regex: term, $options: 'i' } },
+            ];
+        }
+
+        if (languages) {
+            filter.languages = { $in: [languages] }; // Wrap the string in an array to use $in
+        }
+
+        if (partnerType) {
+            filter.partnerType = { $in: [partnerType] }; // Wrap the string in an array to use $in
+        }
+
+        if (countries) {
+            filter.countries = { $in: [countries] }; // Wrap the string in an array to use $in
+        }
+
+        const services = await Service.find({ ...filter }).populate('solutionId')
+        return services;
+
+        // res.status(200).send({ success: true, services });
+    } catch (error) {
+        res.status(500).send({ success: false, message: 'Something went wrong', error });
+    }
+};
