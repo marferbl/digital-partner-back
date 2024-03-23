@@ -6,4 +6,5 @@ module.exports = (app) => {
   app.use('/service', require('./service.routes'))
   app.use('/manual', require('./manual.routes'))
   app.use('/file', require('./file.routes'))
+  app.use('/search', require('./search.routes'))
 };

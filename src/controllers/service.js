@@ -69,6 +69,7 @@ exports.getAllServicesFilter = async (req, res) => {
         const partnerType = req.query.partnerType;
         const languages = req.query.languages;
         const countries = req.query.countries;
+        const lineType = req.query.lineType;
 
         let filter = {};
 
@@ -78,6 +79,10 @@ exports.getAllServicesFilter = async (req, res) => {
                 { description: { $regex: term, $options: 'i' } },
                 { web: { $regex: term, $options: 'i' } },
             ];
+        }
+
+        if (lineType) {
+            filter.lineType = lineType;
         }
 
         if (languages) {

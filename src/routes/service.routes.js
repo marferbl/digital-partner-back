@@ -15,7 +15,7 @@ router.post("/create", isAuthenticated, (req, res) => {
     serviceController.createService(req, res);
 });
 
-router.get("/details/:id", isAuthenticated, (req, res) => {
+router.get("/details/:id", (req, res) => {
     serviceController.getServiceById(req, res);
 });
 

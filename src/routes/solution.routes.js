@@ -17,8 +17,7 @@ router.get("/details/:id", (req, res) => {
 });
 
 router.get("/all", (req, res) => {
-    searchController.getAllItems(req, res);
-    // solutionController.getAllSolutionsFilter(req, res);
+    solutionController.getAllSolutions(req, res);
 });
 
 

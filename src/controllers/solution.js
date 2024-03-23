@@ -37,6 +37,16 @@ exports.getSolutionById = async (req, res) => {
     }
 }
 
+exports.getAllSolutions = async (req, res) => {
+    try {
+        const solutions = await Solution.find();
+        res.status(200).send({ success: true, solutions });
+    } catch (error) {
+        res.status(500 || 400).send({ message: 'Something went wrong', error });
+        return { success: false, error };
+    }
+}
+
 exports.getAllSolutionsFilter = async (req, res) => {
     try {
         const term = req.query.term;
@@ -45,6 +55,8 @@ exports.getAllSolutionsFilter = async (req, res) => {
         const sector = req.query.sector;
         const languages = req.query.languages;
         const countries = req.query.countries;
+        const lineType = req.query.lineType;
+
 
         let filter = {};
 
@@ -58,6 +70,10 @@ exports.getAllSolutionsFilter = async (req, res) => {
 
         if (feature) {
             filter.feature = feature;
+        }
+
+        if (lineType) {
+            filter.lineType = lineType;
         }
 
         if (isVertical !== undefined) {
@@ -76,6 +92,7 @@ exports.getAllSolutionsFilter = async (req, res) => {
             filter.countries = { $in: [countries] }; // Wrap the string in an array to use $in
         }
 
+        console.log(filter)
         const solutions = await Solution.find({ ...filter });
         return solutions;
 
