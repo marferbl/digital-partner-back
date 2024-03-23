@@ -92,7 +92,6 @@ exports.getAllSolutionsFilter = async (req, res) => {
             filter.countries = { $in: [countries] }; // Wrap the string in an array to use $in
         }
 
-        console.log(filter)
         const solutions = await Solution.find({ ...filter });
         return solutions;
 

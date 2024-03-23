@@ -3,7 +3,7 @@ const searchController = require('../controllers/search.js');
 
 const { isAuthenticated } = require("./../middleware/jwt.middleware");
 
-router.get("/all", isAuthenticated, (req, res) => {
+router.get("/all", (req, res) => {
     searchController.getAllItems(req, res);
 });
 
