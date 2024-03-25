@@ -25,7 +25,8 @@ exports.createService = async (req, res) => {
 
 exports.getServiceById = async (req, res) => {
     try {
-        const service = await Service.findById(req.params.id).populate('solutionId');
+        const service = await Service.findById(req.params.id).populate(['solutionId', 'corporate'])
+        console.log(service)
         res.status(200).send({ success: true, service });
     } catch (error) {
         res.status(500).send({ message: 'Something went wrong', error });
