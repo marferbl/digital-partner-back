@@ -15,7 +15,7 @@ exports.getServiceByUserCorporate = async (req, res) => {
 
 exports.createService = async (req, res) => {
     try {
-        const corporateById = await Corporate.findOne({ superAdmin: req.payload._id });
+        const corporateById = await Corporate.findOne({ superadmin: req.payload._id });
         const service = await Service.create({ ...req.body, createdBy: req.payload._id, corporate: corporateById._id });
         res.status(200).send({ success: true, service });
     } catch (error) {

@@ -30,6 +30,9 @@ const serviceSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Solution",
   },
+  otherSolution: {
+    type: String,
+  },
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: "User",
