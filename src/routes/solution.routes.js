@@ -20,6 +20,16 @@ router.get("/all", (req, res) => {
     solutionController.getAllSolutions(req, res);
 });
 
+router.put("/update/:id", isAuthenticated, (req, res) => {
+    solutionController.updateSolution(req, res);
+});
+
+router.delete("/delete/:id", isAuthenticated, (req, res) => {
+    solutionController.deleteSolution(req, res);
+});
+
+
+
 
 
 

@@ -5,7 +5,7 @@ const Solution = require('../models/solution');
 exports.getServiceByUserCorporate = async (req, res) => {
     try {
         const services = await
-            Service.find({ createdBy: req.payload._id }).populate('solutionId');
+            Service.find({ createdBy: req.payload._id }).populate(['solutionId', 'corporate']);
         res.status(200).send({ success: true, services });
     } catch (error) {
         res.status(500 || 400).send({ message: 'Something went wrong', error });
@@ -51,6 +51,16 @@ exports.getServicesBySolution = async (req, res) => {
     }
 }
 
+exports.deleteService = async (req, res) => {
+    try {
+        await Service.findOneAndDelete({ _id: req.params.id });
+        res.status(200).send({ success: true });
+    } catch (error) {
+        res.status(500).send({ message: 'Something went wrong', error });
+    }
+}
+
+
 exports.updateService = async (req, res) => {
     try {
         const service = await Service.findByIdAndUpdate
@@ -71,6 +81,7 @@ exports.getAllServicesFilter = async (req, res) => {
         const languages = req.query.languages;
         const countries = req.query.countries;
         const lineType = req.query.lineType;
+        const serviceType = req.query.serviceType;
 
         let filter = {};
 
@@ -90,6 +101,10 @@ exports.getAllServicesFilter = async (req, res) => {
             filter.languages = { $in: [languages] }; // Wrap the string in an array to use $in
         }
 
+        if (serviceType) {
+            filter.serviceType = { $in: [serviceType] }; // Wrap the string in an array to use $in
+        }
+
         if (partnerType) {
             filter.partnerType = { $in: [partnerType] }; // Wrap the string in an array to use $in
         }
@@ -98,7 +113,7 @@ exports.getAllServicesFilter = async (req, res) => {
             filter.countries = { $in: [countries] }; // Wrap the string in an array to use $in
         }
 
-        const services = await Service.find({ ...filter }).populate('solutionId')
+        const services = await Service.find({ ...filter }).populate(['solutionId', 'corporate'])
         return services;
 
         // res.status(200).send({ success: true, services });

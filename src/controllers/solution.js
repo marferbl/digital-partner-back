@@ -6,13 +6,35 @@ exports.getSolutionsByCorporate = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.payload._id });
         const corporate = await Corporate.findOne({ superadmin: user.id });
-        const solutions = await Solution.find({ corporate });
+        const solutions = await Solution.find({ corporate })
         res.status(200).send({ success: true, solutions });
     } catch (error) {
         res.sendStatus(500 || 400).send({ message: 'Something went wrong', error });
         return { success: false, error };
     }
 };
+
+exports.updateSolution = async (req, res) => {
+    try {
+        const solution = await Solution
+            .findOneAndUpdate({ _id: req.params.id }, req
+                .body, { new: true });
+        res.status(200).send({ success: true, solution });
+    } catch (error) {
+        res.status(500 || 400).send({ message: 'Something went wrong', error });
+        return { success: false, error };
+    }
+}
+
+exports.deleteSolution = async (req, res) => {
+    try {
+        await Solution.findOneAndDelete({ _id: req.params.id });
+        res.status(200).send({ success: true });
+    } catch (error) {
+        res.status(500 || 400).send({ message: 'Something went wrong', error });
+        return { success: false, error };
+    }
+}
 
 exports.createSolution = async (req, res) => {
     try {
