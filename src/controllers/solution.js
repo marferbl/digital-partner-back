@@ -72,12 +72,13 @@ exports.getAllSolutions = async (req, res) => {
 exports.getAllSolutionsFilter = async (req, res) => {
     try {
         const term = req.query.term;
-        const feature = req.query.feature;
+        const features = req.query.features;
         const isVertical = req.query.isVertical;
         const sector = req.query.sector;
         const languages = req.query.languages;
         const countries = req.query.countries;
         const lineType = req.query.lineType;
+        const isErp = req.query.isErp;
 
 
         let filter = {};
@@ -88,10 +89,6 @@ exports.getAllSolutionsFilter = async (req, res) => {
                 { description: { $regex: term, $options: 'i' } },
                 { feature: { $regex: term, $options: 'i' } },
             ];
-        }
-
-        if (feature) {
-            filter.feature = feature;
         }
 
         if (lineType) {
@@ -112,6 +109,16 @@ exports.getAllSolutionsFilter = async (req, res) => {
 
         if (countries) {
             filter.countries = { $in: [countries] }; // Wrap the string in an array to use $in
+        }
+
+        if (features) {
+            filter.features = { $in: features };
+        }
+
+        if (isErp !== undefined) {
+            if (isErp === 'true') {
+                filter.isErp = true;
+            }
         }
 
         const solutions = await Solution.find({ ...filter });

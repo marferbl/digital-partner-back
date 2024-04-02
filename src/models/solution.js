@@ -18,11 +18,15 @@ const solutionSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Corporate",
     },
-    feature: {
-        type: String,
-        default: ''
+    features: {
+        type: Array,
+        default: []
     },
-    isVertical: {
+    isErp: {
+        type: Boolean,
+        default: false
+    },
+    isSectorial: {
         type: Boolean,
         default: false
     },
