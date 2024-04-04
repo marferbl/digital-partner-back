@@ -22,6 +22,10 @@ const solutionSchema = new Schema({
         type: Array,
         default: []
     },
+    specifyFeatures: {
+        type: Array,
+        default: []
+    },
     isErp: {
         type: Boolean,
         default: false

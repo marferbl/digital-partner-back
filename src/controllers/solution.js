@@ -79,6 +79,7 @@ exports.getAllSolutionsFilter = async (req, res) => {
         const countries = req.query.countries;
         const lineType = req.query.lineType;
         const isErp = req.query.isErp;
+        const specifyFeatures = req.query.specifyFeatures;
 
 
         let filter = {};
@@ -114,6 +115,12 @@ exports.getAllSolutionsFilter = async (req, res) => {
         if (features) {
             filter.features = { $in: features };
         }
+
+        if (specifyFeatures) {
+            filter.specifyFeatures = { $in: specifyFeatures };
+        }
+
+
 
         if (isErp !== undefined) {
             if (isErp === 'true') {
