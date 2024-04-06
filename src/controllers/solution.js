@@ -51,7 +51,10 @@ exports.createSolution = async (req, res) => {
 exports.getSolutionById = async (req, res) => {
     try {
         const solution = await
-            Solution.findOne({ _id: req.params.id });
+            Solution.findOne({ _id: req.params.id }).populate({
+                path: 'corporate',
+                populate: { path: 'superadmin' }
+            })
         res.status(200).send({ success: true, solution });
     } catch (error) {
         res.status(500 || 400).send({ message: 'Something went wrong', error });
