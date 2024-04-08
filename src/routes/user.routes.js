@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const cloudinary = require("../cloudinary-config");
 const Corporate = require("../models/corporate");
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 router.get("/", async (req, res) => {
   const userList = await User.find();
@@ -157,6 +158,19 @@ router.get("/me", isAuthenticated, async (req, res, next) => {
   } catch (error) {
     res.status(500 || 400).send({ message: 'Something went wrong', error });
     return { success: false, error };
+  }
+});
+
+router.post('/create-payment-intent', async (req, res) => {
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: req.body.amount,
+      currency: 'usd',
+    });
+
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
