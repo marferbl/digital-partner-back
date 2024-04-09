@@ -91,7 +91,6 @@ exports.getAllSolutionsFilter = async (req, res) => {
             filter.$or = [
                 { name: { $regex: term, $options: 'i' } },
                 { description: { $regex: term, $options: 'i' } },
-                { feature: { $regex: term, $options: 'i' } },
             ];
         }
 
