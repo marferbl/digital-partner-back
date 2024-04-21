@@ -28,8 +28,7 @@ exports.getServiceById = async (req, res) => {
         const service = await Service.findById(req.params.id).populate({
             path: 'corporate',
             populate: { path: 'superadmin' }
-        })
-        console.log(service)
+        }).populate('solutionId');
         res.status(200).send({ success: true, service });
     } catch (error) {
         res.status(500).send({ message: 'Something went wrong', error });
