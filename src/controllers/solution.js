@@ -107,11 +107,11 @@ exports.getAllSolutionsFilter = async (req, res) => {
         }
 
         if (languages) {
-            filter.languages = { $in: [languages] }; // Wrap the string in an array to use $in
+            filter.languages = { $in: languages }; // Wrap the string in an array to use $in
         }
 
         if (countries) {
-            filter.countries = { $in: [countries] }; // Wrap the string in an array to use $in
+            filter.countries = { $in: countries }; // Wrap the string in an array to use $in
         }
 
         if (features) {
