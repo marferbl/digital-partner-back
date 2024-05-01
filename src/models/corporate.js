@@ -8,11 +8,11 @@ const corporateSchema = new Schema({
     },
     cif: {
         type: String,
-        required: true,
+        required: false,
     },
     country: {
         type: String,
-        required: true,
+        required: false,
     },
     web: {
         type: String,
@@ -24,6 +24,7 @@ const corporateSchema = new Schema({
     },
     size: {
         type: Number,
+        required: false,
     },
     logo: {
         type: String,

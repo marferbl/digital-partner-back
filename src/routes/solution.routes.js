@@ -1,8 +1,11 @@
 const router = require("express").Router();
 const solutionController = require('../controllers/solution.js');
 const searchController = require('../controllers/search.js');
+const multer = require("multer");
 
 const { isAuthenticated } = require("./../middleware/jwt.middleware");
+const upload = multer({ dest: "uploads/" });
+
 
 router.get("/by-corporate", isAuthenticated, (req, res) => {
     solutionController.getSolutionsByCorporate(req, res);
@@ -27,6 +30,11 @@ router.put("/update/:id", isAuthenticated, (req, res) => {
 router.delete("/delete/:id", isAuthenticated, (req, res) => {
     solutionController.deleteSolution(req, res);
 });
+
+router.post("/uploadImage/:id", upload.single("logo"),
+    isAuthenticated, (req, res) => {
+        solutionController.uploadImage(req, res);
+    });
 
 
 

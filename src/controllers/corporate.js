@@ -3,21 +3,20 @@ const User = require('../models/user');
 
 exports.getCorporate = async (req, res) => {
     try {
-        const user = await User.findOne({ _id: req.payload._id });
-        const corporate = await Corporate.findOne({ superadmin: user.id });
+        const corporate = await Corporate.findOne({ superadmin: req.payload._id });
         res.status(200).send({ success: true, corporate });
     } catch (error) {
-        res.status(500 || 400).send({ message: 'Something went wrong', error });
+        res.status(500).send({ message: 'Something went wrong', error });
         return { success: false, error };
     }
 };
 
 exports.createCorporate = async (req, res) => {
     try {
-        const user = await User.findOne({ _id: req.payload._id });
-        const corporate = await Corporate.create({ superadmin: user.id, ...req.body });
+        const corporate = await Corporate.create({ superadmin: req.payload._id, ...req.body });
         res.status(200).send({ success: true, corporate });
     } catch (error) {
+        console.log(error)
         res.status(500).send({ message: 'Something went wrong', error });
     }
 };
