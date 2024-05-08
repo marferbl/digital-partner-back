@@ -114,7 +114,7 @@ router.put("/update", isAuthenticated, async (req, res) => {
   }
 });
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ dest: "tmp/" });
 router.post(
   "/change/avatar",
   upload.single("avatar"),
