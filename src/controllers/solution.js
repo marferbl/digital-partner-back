@@ -52,7 +52,13 @@ exports.createSolution = async (req, res) => {
 
 exports.uploadImage = async (req, res) => {
     try {
+
         const result = await cloudinary.uploader.upload(req.file.path);
+        console.log(req.file)
+        cloudinary.uploader.upload(req.file.path,
+            { public_id: req.file.asset_id },
+            function (error, result) { console.log(result); });
+
         const solution = await Solution.findByIdAndUpdate(
             req.params.id,
             {
