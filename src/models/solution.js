@@ -12,7 +12,7 @@ const solutionSchema = new Schema({
     },
     logo: {
         type: String,
-        default: 'https://www.creativefabrica.com/wp-content/uploads/2018/12/Tools-icon-by-rudezstudio-2-580x386.jpg'
+        default: ''
     },
     corporate: {
         type: Schema.Types.ObjectId,
