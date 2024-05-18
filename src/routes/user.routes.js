@@ -174,4 +174,21 @@ router.post('/create-payment-intent', async (req, res) => {
   }
 });
 
+router.post('/change-password', async (req, res) => {
+  const { email, password } = req.body;
+  const salt = bcrypt.genSaltSync(saltRounds);
+  const hashedPassword = bcrypt.hashSync(password, salt);
+
+  try {
+    const user
+      = await User.findOneAndUpdate
+        ({ email }, { password: hashedPassword }, { new: true });
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal Server Error', error });
+  }
+
+});
+
 module.exports = router;
