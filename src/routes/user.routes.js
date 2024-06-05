@@ -153,8 +153,14 @@ router.get("/verify", isAuthenticated, (req, res, next) => {
 router.get("/me", isAuthenticated, async (req, res, next) => {
   try {
     const user = await User.findOne({ _id: req.payload._id });
-    const corporate = await Corporate.findOne({ superadmin: user.id });
-    res.status(200).send(user);
+    const corporate = await Corporate.findOne({ superadmin: req.payload._id });
+    const userResponse = user.toObject();
+    if (corporate) {
+      userResponse.corporate = corporate;
+    }
+    console.log(corporate)
+
+    res.status(200).send(userResponse);
   } catch (error) {
     res.status(500 || 400).send({ message: 'Something went wrong', error });
     return { success: false, error };
