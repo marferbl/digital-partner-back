@@ -50,6 +50,7 @@ exports.getFavoritesHandler = async (userId) => {
             return [];
         }
 
+
         const favorites = await Promise.all(favorite.entities.map(async (entity) => {
             const { model, itemId } = entity;
             const entityModel = model === 'Solution' ? Solution : Service;
@@ -72,16 +73,17 @@ exports.addFavorite = async (req, res) => {
     if (!Types.ObjectId.isValid(entityId)) {
         return res.status(400).send({ success: false, message: "Invalid entityId format" });
     }
+    const entityToAdd = {
+        model: entityType, // "Solution" or "Service"
+        itemId: entityId
+    };
 
     try {
-        let favorite = await Favorite.findOne({ userId: req.payload._id });
-        if (!favorite) {
-            favorite = await Favorite.create({ userId: req.payload._id });
-        }
-        favorite.entities.push({
-            model: entityType, // "Solution" or "Service"
-            itemId: entityId
-        });
+        const favorite = await Favorite.findOneAndUpdate(
+            { userId: req.payload._id },
+            { $addToSet: { entities: entityToAdd } },
+            { new: true, upsert: true } // Return the updated document, and create it if it doesn't exist
+        );
 
         await favorite.save();
         res.status(200).send({ success: true, favorite });

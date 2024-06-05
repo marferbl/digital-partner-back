@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const cloudinary = require("../cloudinary-config");
 const Corporate = require("../models/corporate");
+const favorite = require("../models/favorite");
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 router.get("/", async (req, res) => {
@@ -50,7 +51,8 @@ router.post("/signup", (req, res, next) => {
     })
     .then((createdUser) => {
       const { email, _id, name, avatar } = createdUser;
-
+      console.log(createdUser)
+      favorite.create({ userId: createdUser._id });
       const user = { email, _id, name, avatar };
 
       res.status(201).json({ user });
