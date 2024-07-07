@@ -43,7 +43,7 @@ exports.getFavorites = async (req, res) => {
 
 exports.getFavoritesHandler = async (userId) => {
     try {
-        const favorite = await Favorite.findOne({ user: userId });
+        const favorite = await Favorite.findOne({ userId: userId });
 
         if (!favorite) {
             console.log('No favorites found for this user.');
@@ -90,5 +90,51 @@ exports.addFavorite = async (req, res) => {
     } catch (error) {
         console.error('Error adding favorite:', error);
         res.status(500).send({ success: false, message: "Error adding favorite" });
+    }
+}
+
+exports.removeFavorite = async (req, res) => {
+    const { entityId } = req.params;
+
+    if (!Types.ObjectId.isValid(entityId)) {
+        return res.status(400).send({ success: false, message: "Invalid entityId format" });
+    }
+
+    try {
+        const favorite = await Favorite.findOneAndUpdate(
+            { userId: req.payload._id },
+            { $pull: { entities: { itemId: entityId } } },
+            { new: true }
+        );
+
+        await favorite.save();
+        res.status(200).send({ success: true, favorite });
+    } catch (error) {
+        console.error('Error removing favorite:', error);
+        res.status(500).send({ success: false, message: "Error removing favorite" });
+    }
+}
+
+exports.isFavorite = async (req, res) => {
+    const { entityId } = req.params;
+
+    if (!Types.ObjectId.isValid(entityId)) {
+        return res.status(400).send({ success: false, message: "Invalid entityId format" });
+    }
+
+    try {
+        const favorite = await Favorite.findOne({ userId: req.payload._id });
+
+        if (!favorite) {
+            return res.status(200).send({ success: true, isFavorite: false });
+        }
+
+        const isFavorite = favorite.entities.some(entity => entity.itemId.toString() === entityId);
+
+        res.status(200).send({ success: true, isFavorite: isFavorite });
+    }
+    catch (error) {
+        console.error('Error checking if favorite:', error);
+        res.status(500).send({ success: false, message: "Error checking if favorite" });
     }
 }

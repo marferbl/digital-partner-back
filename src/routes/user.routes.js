@@ -51,7 +51,6 @@ router.post("/signup", (req, res, next) => {
     })
     .then((createdUser) => {
       const { email, _id, name, avatar } = createdUser;
-      console.log(createdUser)
       favorite.create({ userId: createdUser._id });
       const user = { email, _id, name, avatar };
 

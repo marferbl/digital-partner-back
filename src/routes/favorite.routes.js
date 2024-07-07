@@ -20,20 +20,14 @@ router.delete("/remove", isAuthenticated, async (req, res) => {
 }
 );
 
-router.get("/migration", async (req, res) => {
+router.get("/isFavorite/:entityId", isAuthenticated, async (req, res) => {
+    favoriteController.isFavorite(req, res);
+});
 
-    User.find().then((users) => {
-        users.forEach((user) => {
-            const fav = new favorite({
-                userId: user._id,
-                favorites: [],
-            });
-            fav.save();
-        });
-    });
-    res.status(200).send({ success: true });
-}
-);
+router.delete("/remove/:entityId", isAuthenticated, async (req, res) => {
+    favoriteController.removeFavorite(req, res);
+});
+
 
 
 module.exports = router;
