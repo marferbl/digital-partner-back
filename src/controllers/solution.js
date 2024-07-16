@@ -1,7 +1,7 @@
 const Corporate = require('../models/corporate');
 const User = require('../models/user');
 const Solution = require('../models/solution');
-const cloudinary = require("../cloudinary-config");
+const ImageController = require('./image');
 
 
 exports.getSolutionsByCorporate = async (req, res) => {
@@ -52,25 +52,11 @@ exports.createSolution = async (req, res) => {
 
 exports.uploadImage = async (req, res) => {
     try {
-
-        const result = await cloudinary.uploader.upload(req.file.path);
-        cloudinary.uploader.upload(req.file.path,
-            { public_id: req.file.asset_id },
-            function (error, result) { console.log(result); });
-
-        const solution = await Solution.findByIdAndUpdate(
-            req.params.id,
-            {
-                logo: result.secure_url,
-            },
-            { new: true }
-        );
-        res.status(200).json(solution);
+        const result = await ImageController.uploadImage(req, res);
+        res.status(200).send(result);
     } catch (error) {
-        console.log(error);
         res.status(500).send(error);
     }
-
 }
 
 
