@@ -9,4 +9,5 @@ module.exports = (app) => {
   app.use('/search', require('./search.routes'))
   app.use('/certification', require('./certification.routes'))
   app.use('/favorite', require('./favorite.routes'))
+  app.use('/image', require('./image.routes'))
 };

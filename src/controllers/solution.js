@@ -53,7 +53,8 @@ exports.createSolution = async (req, res) => {
 exports.uploadImage = async (req, res) => {
     try {
         const result = await ImageController.uploadImage(req, res);
-        res.status(200).send(result);
+        const solution = await Solution.findOneAndUpdate({ _id: req.params.id }, { logo: result }, { new: true });
+        res.status(200).send(solution);
     } catch (error) {
         res.status(500).send(error);
     }

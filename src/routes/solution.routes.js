@@ -4,7 +4,7 @@ const searchController = require('../controllers/search.js');
 const multer = require("multer");
 
 const { isAuthenticated } = require("./../middleware/jwt.middleware");
-const upload = multer({ dest: "tmp/" });
+const upload = multer({ dest: "/tmp" });
 
 
 router.get("/by-corporate", isAuthenticated, (req, res) => {
