@@ -38,6 +38,10 @@ const userSchema = new Schema({
   job: {
     type: String,
     required: false,
+  },
+  verified: {
+    type: Boolean,
+    default: false
   }
 }, { timestamps: true });
 

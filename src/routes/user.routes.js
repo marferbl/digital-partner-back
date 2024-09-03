@@ -9,58 +9,100 @@ const cloudinary = require("../cloudinary-config");
 const Corporate = require("../models/corporate");
 const favorite = require("../models/favorite");
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const nodemailer = require("nodemailer");
+
 
 router.get("/", async (req, res) => {
   const userList = await User.find();
   res.sendStatus(200).send(userList);
 });
 
-router.post("/signup", (req, res, next) => {
+router.post("/signup", async (req, res, next) => {
   const { email, password, name } = req.body;
 
-  if (email === "" || password === "") {
-    res.status(400).json({ message: "Provide email, password and name" });
-    return;
+  // Check if email, password, or name are empty
+  if (!email || !password || !name) {
+    return res.status(400).json({ message: "Provide email, password, and name" });
   }
 
+  // Validate email format
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   if (!emailRegex.test(email)) {
-    res.status(400).json({ message: "Provide a valid email address." });
-    return;
+    return res.status(400).json({ message: "Provide a valid email address." });
   }
 
-  if (password.length < 2) {
-    res.status(400).json({
+  // Validate password length
+  if (password.length < 6) {
+    return res.status(400).json({
       message:
         "Password must have at least 6 characters and contain at least one number, one lowercase and one uppercase letter.",
     });
-    return;
   }
 
-  User.findOne({ email })
-    .then((foundUser) => {
-      if (foundUser) {
-        res.status(400).json({ message: "User already exists." });
-        return;
-      }
+  try {
+    // Check if a user with the same email already exists
+    const foundUser = await User.findOne({ email });
+    if (foundUser) {
+      return res.status(400).json({ message: "User already exists." });
+    }
 
-      const salt = bcrypt.genSaltSync(saltRounds);
-      const hashedPassword = bcrypt.hashSync(password, salt);
+    // Encrypt password
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hashedPassword = bcrypt.hashSync(password, salt);
 
-      return User.create({ email, password: hashedPassword, name });
-    })
-    .then((createdUser) => {
-      const { email, _id, name, avatar } = createdUser;
-      favorite.create({ userId: createdUser._id });
-      const user = { email, _id, name, avatar };
+    // Create new user
+    const createdUser = await User.create({ email, password: hashedPassword, name });
 
-      res.status(201).json({ user });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ message: "Internal Server Error" });
-    });
+    // Create a favorite for the user
+    await favorite.create({ userId: createdUser._id });
+
+    // Prepare user object for response
+    const { _id, avatar } = createdUser;
+    const user = { email, _id, name, avatar };
+
+
+
+    // const transporter = nodemailer.createTransport({
+    //   service: 'gmail',
+    //   auth: {
+    //     user: process.env.EMAIL_USERNAME,
+    //     pass: process.env.EMAIL_PASSWORD
+    //   }
+    // });
+
+    // const mailConfigurations = {
+    //   from: {
+    //     name: 'Digitalando Team',
+    //     address: 'digitalandocompany@gmail.com'
+    //   },
+    //   to: email,
+    //   subject: 'Email Verification',
+    //   html: `
+    //     <div>
+    //       <b>Haz click en el siguiente enlace para confirmar tu cuenta</b><br><br>
+    //       <a href='http://localhost:3000/confirm/email/${_id}'>Confirmar</a>
+    //     </div>
+    //   `
+    // };
+
+    // transporter.sendMail(mailConfigurations, function (error, info) {
+    //   if (error) throw Error(error);
+    //   else {
+    //     console.log('Email Sent Successfully');
+    //     console.log(info);
+    //   }
+
+    // });
+
+
+    // Respond with the created user data
+    res.status(201).json({ user });
+  } catch (err) {
+    console.error(err); // Log error for debugging purposes
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
+
 
 router.post("/login", (req, res, next) => {
   const { email, password } = req.body;
@@ -141,7 +183,6 @@ router.post(
 
 router.delete("/delete", async (req, res) => {
   let users = await User.find();
-  console.log(users);
   users.map(async (elm) => {
     await User.findByIdAndRemove(elm.id);
   });
@@ -181,8 +222,10 @@ router.post('/create-payment-intent', async (req, res) => {
   }
 });
 
-router.post('/change-password', async (req, res) => {
-  const { email, password } = req.body;
+router.post('/change-password', isAuthenticated, async (req, res) => {
+  const { password } = req.body;
+  const user = await User.findOne({ _id: req.payload._id });
+  const email = user.email
   const salt = bcrypt.genSaltSync(saltRounds);
   const hashedPassword = bcrypt.hashSync(password, salt);
 
@@ -197,5 +240,73 @@ router.post('/change-password', async (req, res) => {
   }
 
 });
+
+router.put('/verify-email', async (req, res) => {
+  const id = req.body.id
+  try {
+    const user
+      = await User.findByIdAndUpdate
+        ({ id }, { verified: true }, { new: true });
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal Server Error', error });
+  }
+
+});
+
+router.post('/send-new-password', async (req, res) => {
+  const email = req.body.email
+  const user = await User.findOne({ email: email });
+  const id = user._id
+  const newPass = id.toString()
+
+  try {
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hashedPassword = bcrypt.hashSync(newPass, salt);
+
+    const user
+      = await User.findByIdAndUpdate
+        (id, { password: hashedPassword }, { new: true });
+
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD
+      }
+    });
+
+    const mailConfigurations = {
+      from: {
+        name: 'Digitalando Team',
+        address: 'digitalandocompany@gmail.com'
+      },
+      to: email,
+      subject: 'Cambio de contraseña',
+      html: `
+        <div>
+          <b>Aqui tienes tu nueva contraseña, accede al panel para poner la contraseña que tu quieras</b><br><br>
+          <p>${newPass}</p>
+        </div>
+      `
+    };
+
+    transporter.sendMail(mailConfigurations, function (error, info) {
+      if (error) throw Error(error);
+      else {
+        console.log('Email Sent Successfully');
+      }
+
+    });
+
+    res.status(200).json({ status: 200 });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal Server Error', error });
+  }
+
+});
+
 
 module.exports = router;
