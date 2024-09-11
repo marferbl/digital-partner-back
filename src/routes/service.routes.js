@@ -15,6 +15,10 @@ router.post("/create", isAuthenticated, (req, res) => {
     serviceController.createService(req, res);
 });
 
+router.put("/update/:id", isAuthenticated, (req, res) => {
+    serviceController.updateService(req, res);
+});
+
 router.delete("/delete/:id", isAuthenticated, (req, res) => {
     serviceController.deleteService(req, res);
 });

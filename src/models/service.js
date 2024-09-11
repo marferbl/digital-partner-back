@@ -5,6 +5,7 @@ const serviceSchema = new Schema({
   title: {
     type: String,
     required: false,
+    default: ''
   },
   description: {
     type: String,

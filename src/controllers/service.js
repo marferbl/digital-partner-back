@@ -67,8 +67,7 @@ exports.updateService = async (req, res) => {
     try {
         const service = await Service.findByIdAndUpdate
             (req.params.id, {
-                ...req
-                    .body
+                ...req.body
             }, { new: true });
         res.status(200).send({ success: true, service });
     } catch (error) {
