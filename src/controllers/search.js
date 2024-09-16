@@ -7,10 +7,26 @@ const Service = require("../models/service");
 const openai = new OpenAI();
 
 exports.getAllItems = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const startIndex = (page - 1) * limit;
     const solutions = await solutionController.getAllSolutionsFilter(req, res);
     const services = await serviceController.getAllServicesFilter(req, res);
     const results = solutions.concat(services);
-    res.status(200).send({ success: true, results });
+
+    const totalResults = results.length;
+    const totalPages = Math.ceil(totalResults / limit);
+    const paginatedResults = results.slice(startIndex, startIndex + limit);
+
+
+    res.status(200).send({
+        success: true, meta: {
+            totalResults,
+            totalPages,
+            currentPage: page,
+            limit
+        }, results: paginatedResults
+    });
 };
 
 
