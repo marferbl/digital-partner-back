@@ -35,6 +35,10 @@ router.get("/by-solution/:id", isAuthenticated, (req, res) => {
     serviceController.getServicesBySolution(req, res);
 });
 
+router.get("/services-by-corporate/:id", (req, res) => {
+    serviceController.getServicesByCorporate(req, res);
+});
+
 
 
 

@@ -75,6 +75,16 @@ exports.updateService = async (req, res) => {
     }
 }
 
+exports.getServicesByCorporate = async (req, res) => {
+    try {
+        const services = await Service.find({ corporate: req.params.id }).populate('corporate');
+        res.status(200).send({ success: true, services });
+    } catch (error) {
+        res.status(500).send({ message: 'Something went wrong', error });
+    }
+}
+
+
 exports.getAllServicesFilter = async (req, res) => {
     try {
         const term = req.query.term;
