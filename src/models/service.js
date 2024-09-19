@@ -49,6 +49,10 @@ const serviceSchema = new Schema({
   lineType: {
     type: String,
     default: 'services'
+  },
+  logo: {
+    type: String,
+    default: ''
   }
 },
   { timestamps: true }

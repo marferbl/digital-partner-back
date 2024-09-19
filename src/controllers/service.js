@@ -1,6 +1,6 @@
 const Corporate = require('../models/corporate');
 const Service = require('../models/service');
-const Solution = require('../models/solution');
+const ImageController = require('./image');
 
 exports.getServiceByUserCorporate = async (req, res) => {
     try {
@@ -72,6 +72,17 @@ exports.updateService = async (req, res) => {
         res.status(200).send({ success: true, service });
     } catch (error) {
         res.status(500).send({ message: 'Something went wrong', error });
+    }
+}
+
+
+exports.uploadImage = async (req, res) => {
+    try {
+        const result = await ImageController.uploadImage(req, res);
+        const service = await Service.findByIdAndUpdate(req.params.id, { logo: result }, { new: true });
+        res.status(200).send(service);
+    } catch (error) {
+        res.status(500).send(error);
     }
 }
 

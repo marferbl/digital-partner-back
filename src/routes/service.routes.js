@@ -1,7 +1,9 @@
 const router = require("express").Router();
 const serviceController = require('../controllers/service.js');
+const multer = require("multer");
 
 const { isAuthenticated } = require("./../middleware/jwt.middleware");
+const upload = multer({ dest: "/tmp" });
 
 router.get("/by-corporate", isAuthenticated, (req, res) => {
     serviceController.getServiceByUserCorporate(req, res);
@@ -38,6 +40,11 @@ router.get("/by-solution/:id", isAuthenticated, (req, res) => {
 router.get("/services-by-corporate/:id", (req, res) => {
     serviceController.getServicesByCorporate(req, res);
 });
+
+router.post("/uploadImage/:id", upload.single("logo"),
+    isAuthenticated, (req, res) => {
+        serviceController.uploadImage(req, res);
+    });
 
 
 
