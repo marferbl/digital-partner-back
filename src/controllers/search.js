@@ -100,3 +100,63 @@ exports.searchIA = async (req, res) => {
         return [];
     }
 }
+
+exports.getComparationBetweenTwoSolutions = async (req, res) => {
+    const { solutionId1, solutionId2, text } = req.body;
+    try {
+        const solution1 = await Solution
+            .findById(solutionId1)
+        const solution2 = await Solution
+            .findById(solutionId2)
+
+        const prompt = `
+        Here are two solutions to compare:
+        Solution 1:
+        Id: ${solution1._id}
+        Type: ${solution1.lineType}
+        Name: ${solution1.name || solution1.title}
+        Description: ${solution1.description}
+        ServiceType: ${solution1.serviceType}
+        Features: ${solution1.features ? solution1.features.join(', ') : ''}
+        Specify Features: ${solution1.specifyFeatures ? solution1.specifyFeatures.join(', ') : ''}
+        Languages: ${solution1.languages ? solution1.languages.join(', ') : ''}
+        Countries: ${solution1.countries ? solution1.countries.join(', ') : ''}
+        Is Sectorial: ${solution1.isSectorial}
+        Sector Type: ${solution1.sectorType}
+        Is ERP: ${solution1.isErp} 
+        Solution 2:
+        Id: ${solution2._id}
+        Type: ${solution2.lineType}
+        Name: ${solution2.name || solution2.title}
+        Description: ${solution2.description}
+        ServiceType: ${solution2.serviceType}
+        Features: ${solution2.features ? solution2.features.join(', ') : ''}
+        Specify Features: ${solution2.specifyFeatures ? solution2.specifyFeatures.join(', ') : ''}
+        Languages: ${solution2.languages ? solution2.languages.join(', ') : ''}
+        Countries: ${solution2.countries ? solution2.countries.join(', ') : ''}
+        Is Sectorial: ${solution2.isSectorial}
+        Sector Type: ${solution2.sectorType}
+        Is ERP: ${solution2.isErp}
+        Which solution is better, give me a comparartion (maximum of 800 characters ) in spanish between them with pros and cons taking into account the next text: 
+        ${text}.
+        `;
+
+        const response = await openai.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: [
+                {
+                    role: "user",
+                    content: prompt,
+                },
+            ],
+        });
+
+        const output = response.choices[0].message.content.trim();
+        res.status(200).send({ success: true, output });
+
+    } catch (error) {
+        console.error("Error comparing two solutions:", error);
+        return [];
+    }
+}
+

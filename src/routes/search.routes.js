@@ -10,5 +10,10 @@ router.get("/optimize/:keyword", (req, res) => {
     searchController.searchIA(req, res);
 });
 
+router.post("/comparation", (req, res) => {
+    searchController.getComparationBetweenTwoSolutions(req, res);
+});
+
+
 
 module.exports = router;
