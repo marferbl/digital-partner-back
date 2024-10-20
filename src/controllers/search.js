@@ -1,5 +1,6 @@
 const solutionController = require("./solution");
 const serviceController = require("./service");
+const eventController = require("./event");
 const OpenAI = require("openai")
 const Solution = require("../models/solution");
 const Service = require("../models/service");
@@ -10,9 +11,10 @@ exports.getAllItems = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
     const startIndex = (page - 1) * limit;
-    const solutions = await solutionController.getAllSolutionsFilter(req, res);
-    const services = await serviceController.getAllServicesFilter(req, res);
-    const results = solutions.concat(services);
+    const solutions = await solutionController.getAllSolutionsFilter(req, res) || [];
+    const services = await serviceController.getAllServicesFilter(req, res) || [];
+    const events = await eventController.getAllEventsFilter(req, res) || [];
+    const results = [...solutions, ...services, ...events]
 
     const totalResults = results.length;
     const totalPages = Math.ceil(totalResults / limit);
