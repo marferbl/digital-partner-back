@@ -8,4 +8,4 @@ exports.uploadImage = async (req, res) => {
         crop: "fill",
     });
     return result.url
-} 
+}

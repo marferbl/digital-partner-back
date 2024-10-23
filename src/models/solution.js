@@ -53,7 +53,11 @@ const solutionSchema = new Schema({
     lineType: {
         type: String,
         default: 'solutions'
-    }
+    },
+    gallery: {
+        type: Array,
+        default: []
+    },
 
 
 
