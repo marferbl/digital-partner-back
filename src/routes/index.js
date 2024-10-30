@@ -11,4 +11,5 @@ module.exports = (app) => {
   app.use('/favorite', require('./favorite.routes'))
   app.use('/image', require('./image.routes'))
   app.use('/event', require('./event.routes'))
+  app.use('/blog', require('./blog.routes'))
 };
