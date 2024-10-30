@@ -32,70 +32,141 @@ exports.getAllItems = async (req, res) => {
 };
 
 
+const SPECIFY_FEATURES_LABELS = {
+    ticketing: 'Ticketing',
+    accounting: 'Contabilidad',
+    payment: 'Facturación',
+    tesoreria: 'Tesorería',
+    other: 'Otros',
+    crm: 'CRM',
+    marketingrelational: 'Marketing relacional',
+    marketingdigital: 'Marketing digital',
+    time: 'Control horario',
+    salary: 'Nóminas',
+    personalmanagement: 'Gestión de personal',
+    selection: 'Selección',
+    training: 'Formación',
+    performance: 'Desempeño',
+    warehouse: 'Almacen',
+    transport: 'Flotas',
+    shopping: 'Compras',
+    manufactoring: 'Manufactoring',
+    bbdd: 'BBDD',
+    programminglanguages: 'Lenguajes de programación',
+    webSolutions: 'Soluciones para tu web',
+    appSolutions: 'Soluciones app',
+    helpDesk: 'Helpdesk',
+    cloud: 'Servidores cloud',
+    descriptiveAnalysis: 'Análisis descriptivo',
+    rrss: 'RRSS',
+    dataVisualization: 'Visualizacion de datos',
+    clientSegmentation: 'Segmentacion de clientes',
+    electronicSignature: 'Firma electrónica',
+    gdpr: 'GDPR',
+    grc: 'GRC',
+    riskManagement: 'Risk management',
+    virtualSwitchboard: 'Centralita virtual',
+    documentManager: 'Gestor documental',
+    productivity: 'Productividad',
+    projectManagement: 'Gestión de proyectos',
+    officeSuites: 'Suites ofimáticas',
+    communicationAndDesign: 'Diseño & comunicación',
+    ia: 'IA'
+}
+
+
+const FEATURES = [
+    { value: 'rrhh', label: 'RRHH' },
+    { value: 'sellmarketing', label: 'Ventas y marketing' },
+    { value: 'finance', label: 'Finanzas y contabilidad' },
+    { value: 'logistics', label: 'Cadena de suministro' },
+    { value: 'it', label: 'IT' },
+    { value: 'data', label: 'Data' },
+    { value: 'law', label: 'Legal' },
+    { value: 'transversal', label: 'Transversal' },
+];
+
+function parseFilterArray(response, filterName) {
+    const regex = new RegExp(`${filterName}: \\[(.*?)\\]`);
+    const match = response.match(regex);
+    return match ? match[1].split(',').map(item => item.trim().replace(/['"]/g, '')) : [];
+}
+
+
 exports.searchIA = async (req, res) => {
     const keyword = req.params.keyword;
     try {
         // Fetch all solutions and services from the database
-        const solutions = await Solution.find({})
-        const services = await Service.find({}).populate(['solutionId', 'corporate'])
+        const serviceWords = ['servicio', 'service', 'servicios', 'services', 'Servicio', 'Service', 'Servicios', 'Services'];
+        if (serviceWords.some(word => keyword.includes(word))) {
+            let results = await Service.find({}).populate(['solutionId', 'corporate'])
 
-        // Prepare the data for the OpenAI API
-        const allEntries = [...solutions, ...services].map(entry => ({
-            id: entry.id,
-            type: entry.lineType,
-            name: entry.name || entry.title,
-            description: entry.description,
-            features: entry.features,
-            specifyFeatures: entry.specifyFeatures,
-            languages: entry.languages,
-            countries: entry.countries,
-            serviceType: entry.serviceType,
-            isSectorial: entry.isSectorial,
-            sectorType: entry.sectorType,
-            isErp: entry.isErp,
-            content: `
-            Id: ${entry._id}
-          Type: ${entry.lineType}
-          Name: ${entry.name || entry.title}
-          Description: ${entry.description}
-          ServiceType: ${entry.serviceType}
-          Features: ${entry.features ? entry.features.join(', ') : ''}
-          Specify Features: ${entry.specifyFeatures ? entry.specifyFeatures.join(', ') : ''}
-          Languages: ${entry.languages ? entry.languages.join(', ') : ''}
-          Countries: ${entry.countries ? entry.countries.join(', ') : ''}
-          Is Sectorial: ${entry.isSectorial}
-          Sector Type: ${entry.sectorType}
-          Is ERP: ${entry.isErp}
-        `
-        }));
+            const prompt = `Necesito hacer una busqueda precisa.
+            Vamos a recibir una palabra o frase de busqueda, que es ${keyword}.
+            Necesito que saques de aqui, las palabras clave, quitando articulos o otras palabras que no aporten en la busqueda, ya que voy a buscar dentro de las entradas
+            que tenemos, aquellas que tengan alguna de estas palabras clave.
+            damelo siempre la respuesta en formado array asi: 
+            keywords: ['keyword1', 'keyword2', 'keyword3', ...]
+    `
 
-        // Prepare the prompt for OpenAI API
-        const prompt = `
-        Here are some solutions and services:
-        ${allEntries.map(entry => entry.content).join('\n\n')}
-        
-        Based on the keyword "${keyword}", which solutions or services are most relevant? Give me the ids of each relevant solution or service. Take into account that the atribute lineType is the type of the entry, it can be "solutions" or "services".
-      `;
+            const response = await openai.chat.completions.create({
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "user",
+                        content: prompt,
+                    },
+                ],
+            });
 
 
+            const output = response.choices[0].message.content.trim();
+            const array = parseFilterArray(output, 'keywords');
 
-        const response = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
-            messages: [
-                {
-                    role: "user",
-                    content: prompt,
-                },
-            ],
-        });
+            results = results.filter(result => array.some(keyword => result.title?.includes(keyword) || result.description?.includes(keyword)));
 
-        // Process the response
-        const output = response.choices[0].message.content.trim();
-        const allResults = [...solutions, ...services];
+            res.status(200).send({ success: true, results });
+        }
 
-        const results = allResults.filter(entry => output.includes(entry.id));
+        else {
+            const prompt = `Necesito hacer una busqueda precisa.
+            Teniendo encuenta que buscamos soluciones, quiero que me des, dependiendo de la busqueda que hemos recibido, que es ${keyword}, la busqueda transformada en filtros.
+            Los filtros que necesito son 2: features y specifyFeatures, y necesito los dos con formato de array.
+            Ten en cuenta estos valores para features: ${FEATURES.map(feature => `${feature.value} es ${feature.value}`).join(', ')}.
+            Y estos valores para specifyFeatures: ${Object.keys(SPECIFY_FEATURES_LABELS).map(key => `${key} es ${SPECIFY_FEATURES_LABELS[key]}`).join(', ')}.
+            Transforma del texto que te ha venido, en los filtros que te he pedido, siendo lo mas preciso posible, pero sin perder informacion. Estos son algunos ejemplos:
+            - Si el texto es "Quiero una solucion de RRHH", los filtros serian: features: ['rrhh'].
+            - Si el texto es "Quiero una solucion de RRHH y de contabilidad", los filtros serian: features: ['rrhh', 'finance']. Y como contabilidad encaja con algun valor de specifyFeatures, se añadiria: specifyFeatures: ['accounting'].
+            Por lo tanto, teniendo en cuenta que la busqueda es ${keyword}, responde solo con los filtros que te he pedido con este formato:
+            1: features: ['feature1', 'feature2', ...]
+            2: specifyFeatures: ['specifyFeature1', 'specifyFeature2', ...]
+            Si specify features no tiene ningun valor,  devuelve un array sin ningun elemento
+    `
 
-        res.status(200).send({ success: true, results });
+            const response = await openai.chat.completions.create({
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "user",
+                        content: prompt,
+                    },
+                ],
+            });
+
+
+            const output = response.choices[0].message.content.trim();
+            const featureFilter = parseFilterArray(output, 'features');
+            const specifyFeatureFilter = parseFilterArray(output, 'specifyFeatures');
+
+            const specifyFeatureParsed = specifyFeatureFilter?.length === 1 && specifyFeatureFilter[0] === '' ? null : specifyFeatureFilter;
+
+            const results = await solutionController.getAllSolutionsFilterFunction(featureFilter, specifyFeatureParsed);
+            // Arrays de features y specifyFeatures extraídos
+
+
+
+            res.status(200).send({ success: true, results });
+        }
 
     } catch (error) {
         console.error("Error searching for keyword:", error);

@@ -152,5 +152,29 @@ exports.getAllSolutionsFilter = async (req, res) => {
     }
 };
 
+exports.getAllSolutionsFilterFunction = async (features, specifyFeatures) => {
+    try {
+
+        let filter = {};
+
+        if (features) {
+            filter.features = { $in: features };
+        }
+
+        if (specifyFeatures) {
+            filter.specifyFeatures = { $in: specifyFeatures };
+        }
+
+        console.log(filter)
+
+        const solutions = await Solution.find({ ...filter });
+        return solutions;
+
+        // res.status(200).send({ success: true, solutions });
+    } catch (error) {
+        res.status(500).send({ success: false, message: 'Something went wrong', error });
+    }
+};
+
 
 
