@@ -50,6 +50,18 @@ const eventSchema = new Schema({
         type: Number,
         required: false,
     },
+    coordinates: {
+        type: Object,
+        default: { lat: '', lng: '' }
+    },
+    gallery: {
+        type: Array,
+        default: []
+    },
+    price: {
+        type: Number,
+        default: 0
+    },
 
 
 });

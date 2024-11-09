@@ -16,6 +16,9 @@ exports.getAllEventsFilter = async (req, res) => {
     try {
         const term = req.query.term;
         const lineType = req.query.lineType;
+        const minPrice = parseFloat(req.query.min);
+        const maxPrice = parseFloat(req.query.max);
+        const type = req.query.eventType;
 
         let filter = {};
 
@@ -29,6 +32,29 @@ exports.getAllEventsFilter = async (req, res) => {
 
         if (lineType) {
             filter.lineType = lineType;
+        }
+        if (!isNaN(minPrice) || !isNaN(maxPrice)) {
+            filter.price = {};
+            if (!isNaN(minPrice)) {
+                filter.price.$gte = minPrice;
+            }
+            if (!isNaN(maxPrice)) {
+                filter.price.$lte = maxPrice;
+            }
+        }
+        if (type) {
+            if (type === 'remote') {
+                filter.type = { $in: ['remote'] }
+            }
+            if (type === 'presential') {
+                filter.type = { $in: ['presential'] }
+            }
+            if (type === 'all') {
+                filter.type = {
+                    $in: ['remote', 'presential']
+                }
+            }
+
         }
 
 
@@ -57,7 +83,6 @@ exports.createEvent = async (req, res) => {
 
 exports.updateEvent = async (req, res) => {
     const { id } = req.params;
-    const { name, description, photo, type, link, corporate, maximumCapacity, date, time, duration } = req.body;
 
     if (!Types.ObjectId.isValid(id)) {
         return res.status(400).send({ success: false, message: "Invalid id format" });
@@ -66,18 +91,7 @@ exports.updateEvent = async (req, res) => {
     try {
         const event = await Event.findByIdAndUpdate(
             id,
-            {
-                name,
-                description,
-                photo,
-                type,
-                link,
-                corporate,
-                maximumCapacity,
-                date,
-                time,
-                duration
-            },
+            { ...req.body },
             { new: true }
         );
 
