@@ -165,7 +165,6 @@ exports.getAllSolutionsFilterFunction = async (features, specifyFeatures) => {
             filter.specifyFeatures = { $in: specifyFeatures };
         }
 
-        console.log(filter)
 
         const solutions = await Solution.find({ ...filter });
         return solutions;

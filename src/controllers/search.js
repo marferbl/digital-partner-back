@@ -160,9 +160,35 @@ exports.searchIA = async (req, res) => {
 
             const specifyFeatureParsed = specifyFeatureFilter?.length === 1 && specifyFeatureFilter[0] === '' ? null : specifyFeatureFilter;
 
-            const results = await solutionController.getAllSolutionsFilterFunction(featureFilter, specifyFeatureParsed);
+            const resultsSearch = await solutionController.getAllSolutionsFilterFunction(featureFilter, specifyFeatureParsed);
             // Arrays de features y specifyFeatures extraídos
 
+            const promptName = `Necesito hacer una busqueda precisa.
+            Vamos a recibir una palabra o frase de busqueda, que es ${keyword}.
+           La busqueda puede que se busque solo por el nombre de la solucion. Si es una sola palabra y no es una frase de busqueda como 'Quiero una solucion...' 'Busco una ...' o 'Solucion de rrhh' que son ejemplos de busqueda, seguramente sea el nombre directamente de una solucion. Entonces devuelveme como respuesta solo la palabra
+    `
+
+            const responseName = await openai.chat.completions.create({
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "user",
+                        content: promptName,
+                    },
+                ],
+            });
+
+
+            const outputName = responseName.choices[0].message.content
+
+            const resultsName = await Solution.find({
+                $or: [
+                    { name: { $regex: new RegExp(outputName, 'i') } },
+                    { description: { $regex: new RegExp(outputName, 'i') } }
+                ]
+            });
+
+            const results = [...resultsSearch, ...resultsName];
 
 
             res.status(200).send({ success: true, results });
