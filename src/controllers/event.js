@@ -71,7 +71,7 @@ exports.createEvent = async (req, res) => {
 
     try {
         const corporateById = await Corporate.findOne({ superadmin: req.payload._id });
-        const event = new Event({ ...req.body, corporate: corporateById?._id });
+        const event = new Event({ ...req.body, corporate: corporateById?._id, createdBy: req.payload._id });
 
         await event.save();
         res.status(200).send({ success: true, event });

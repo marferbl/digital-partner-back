@@ -36,6 +36,10 @@ router.post("/uploadImage/:id", upload.single("logo"),
         solutionController.uploadImage(req, res);
     });
 
+router.get("/top-solutions", (req, res) => {
+    solutionController.getTopSolutions(req, res);
+});
+
 
 
 

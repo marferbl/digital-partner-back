@@ -18,7 +18,9 @@ router.delete("/delete", isAuthenticated, async (req, res) => {
 router.get('/applications/:id', isAuthenticated, async (req, res) => {
     corporateController.getApplications(req, res);
 });
-
+router.get('/entities-by-corporate', isAuthenticated, async (req, res) => {
+    corporateController.getEntitiesByCorporate(req, res);
+});
 
 
 module.exports = router;

@@ -175,5 +175,14 @@ exports.getAllSolutionsFilterFunction = async (features, specifyFeatures) => {
     }
 };
 
+exports.getTopSolutions = async (req, res) => {
+    const IDS = ['66f428dc1ec78dbf9eae276c', '66e869aa03118e874978c1eb', '66e99f8d1aeb6823054f6284', '66e86beb03118e874978c214', '66e15be51236104a5603ac33', '66e99bdf1aeb6823054f6248']
+    try {
+        const solutions = await Solution.find().where('_id').in(IDS).exec();
+        res.status(200).send({ success: true, solutions });
+    } catch (error) {
+        res.status(500).send({ success: false, message: 'Something went wrong', error });
+    }
+}
 
 

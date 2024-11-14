@@ -46,6 +46,10 @@ router.post("/uploadImage/:id", upload.single("logo"),
         serviceController.uploadImage(req, res);
     });
 
+router.get("/top/services", (req, res) => {
+    serviceController.getTopServices(req, res);
+});
+
 
 
 

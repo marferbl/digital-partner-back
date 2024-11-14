@@ -1,6 +1,9 @@
 const Corporate = require('../models/corporate');
 const User = require('../models/user');
 const CompanyApplications = require('../models/company-applications');
+const Solution = require('../models/solution');
+const Service = require('../models/service');
+const Event = require('../models/event');
 
 exports.getCorporate = async (req, res) => {
     try {
@@ -61,6 +64,21 @@ exports.getApplications = async (req, res) => {
     try {
         const applications = await CompanyApplications.findOne({ corporateId: req.params.id });
         res.status(200).send({ success: true, applications });
+    } catch (error) {
+        res.status(500).send({ message: 'Something went wrong', error });
+        return { success: false, error };
+    }
+}
+
+exports.getEntitiesByCorporate = async (req, res) => {
+    try {
+        const user = await User.findOne({ _id: req.payload._id });
+        const corporate = await Corporate.findOne({ superadmin: user.id });
+        const solutions = await Solution.find({ corporate }).countDocuments();
+        const services = await Service.find({ createdBy: req.payload._id }).countDocuments();
+        const events = await Event.find({ createdBy: req.payload._id }).countDocuments();
+
+        res.status(200).send({ success: true, entities: { solutions, services, events } });
     } catch (error) {
         res.status(500).send({ message: 'Something went wrong', error });
         return { success: false, error };

@@ -143,3 +143,12 @@ exports.getAllServicesFilter = async (req, res) => {
         res.status(500).send({ success: false, message: 'Something went wrong', error });
     }
 };
+
+exports.getTopServices = async (req, res) => {
+    try {
+        const services = await Service.find({ title: { $in: ['Snowball', 'NeoAttack', 'Product Hackers', 'Fleet', 'Intellygenz', 'Rebold'] } })
+        res.status(200).send({ success: true, services });
+    } catch (error) {
+        res.status(500).send({ success: false, message: 'Something went wrong', error });
+    }
+};
