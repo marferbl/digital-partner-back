@@ -4,7 +4,7 @@ const CompanyApplications = require('../models/company-applications');
 
 exports.getCorporate = async (req, res) => {
     try {
-        const corporate = await Corporate.findOne({ superadmin: req.payload._id });
+        const corporate = await Corporate.findOne({ superadmin: req.payload._id }).populate('superadmin');
         res.status(200).send({ success: true, corporate });
     } catch (error) {
         res.status(500).send({ message: 'Something went wrong', error });

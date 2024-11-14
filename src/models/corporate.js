@@ -32,6 +32,6 @@ const corporateSchema = new Schema({
             "https://icons.veryicon.com/png/o/miscellaneous/enterprise-common-linetype-icons/enterprise-6.png",
     },
 
-});
+}, { timestamps: true });
 
 module.exports = model("Corporate", corporateSchema);
