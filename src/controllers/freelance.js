@@ -3,7 +3,7 @@ const Freelance = require('../models/freelance');
 
 exports.getFreelance = async (req, res) => {
     try {
-        const freelance = await Freelance.findOne({ _user: req.payload._id });
+        const freelance = await Freelance.findOne({ user: req.payload._id }).populate('user');
         res.status(200).send({ success: true, freelance });
     } catch (error) {
         res.status(500 || 400).send({ message: 'Something went wrong', error });
@@ -13,7 +13,7 @@ exports.getFreelance = async (req, res) => {
 
 exports.createFreelance = async (req, res) => {
     try {
-        const freelance = await Freelance.create({ _user: req.payload._id, ...req.body });
+        const freelance = await Freelance.create({ user: req.payload._id, ...req.body });
         res.status(200).send({ success: true, freelance });
     } catch (error) {
         res.status(500).send({ message: 'Something went wrong', error });
