@@ -11,6 +11,28 @@ exports.getFreelance = async (req, res) => {
     }
 }
 
+exports.getAllWithSearchAndFilters = async (req, res) => {
+    try {
+        const term = req.query.term;
+        let filter = {};
+
+        if (term) {
+            filter.$or = [
+                { fullName: { $regex: term, $options: 'i' } },
+                { introduction: { $regex: term, $options: 'i' } },
+                { aboutMe: { $regex: term, $options: 'i' } },
+                { job: { $regex: term, $options: 'i' } },
+                { technologies: { $elemMatch: { name: { $regex: term, $options: 'i' } } } },
+            ];
+        }
+        const results = await Freelance.find(filter).populate('user');
+        return results;
+    } catch (error) {
+        res.status(500 || 400).send({ message: 'Something went wrong', error });
+        return { success: false, error };
+    }
+}
+
 exports.createFreelance = async (req, res) => {
     try {
         const freelance = await Freelance.create({ user: req.payload._id, ...req.body });

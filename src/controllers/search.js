@@ -1,6 +1,7 @@
 const solutionController = require("./solution");
 const serviceController = require("./service");
 const eventController = require("./event");
+const freelanceController = require("./freelance");
 const OpenAI = require("openai")
 const Solution = require("../models/solution");
 const Service = require("../models/service");
@@ -14,7 +15,15 @@ exports.getAllItems = async (req, res) => {
     const solutions = await solutionController.getAllSolutionsFilter(req, res) || [];
     const services = await serviceController.getAllServicesFilter(req, res) || [];
     const events = await eventController.getAllEventsFilter(req, res) || [];
-    const results = [...solutions, ...services, ...events]
+    const freelancers = await freelanceController.getAllWithSearchAndFilters(req, res) || [];
+
+    let results = []
+
+    if (req.query.lineType === 'freelance') {
+        results = freelancers;
+    } else {
+        results = [...solutions, ...services, ...events]
+    }
 
     const totalResults = results.length;
     const totalPages = Math.ceil(totalResults / limit);
@@ -95,8 +104,7 @@ function parseFilterArray(response, filterName) {
 
 exports.searchIA = async (req, res) => {
     const keyword = req.params.keyword;
-    try {
-        // Fetch all solutions and services from the database
+    try {        // Fetch all solutions and services from the database
         const serviceWords = ['servicio', 'service', 'servicios', 'services', 'Servicio', 'Service', 'Servicios', 'Services'];
         if (serviceWords.some(word => keyword.includes(word))) {
             let results = await Service.find({}).populate(['solutionId', 'corporate'])
