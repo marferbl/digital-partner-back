@@ -18,6 +18,10 @@ router.delete("/delete", isAuthenticated, async (req, res) => {
     freelanceController.deleteFreelance(req, res);
 });
 
+router.get("/details/:id", async (req, res) => {
+    freelanceController.getFreelanceById(req, res);
+});
+
 
 
 

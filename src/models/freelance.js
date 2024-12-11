@@ -4,8 +4,8 @@ const { Schema, model } = mongoose;
 const StudySchema = new mongoose.Schema({
   name: { type: String, required: true },
   entity: { type: String, required: true },
-  start: { type: Date, required: true },
-  end: { type: Date, required: false },
+  start: { type: Number, required: true },
+  end: { type: Number, required: false },
   description: { type: String, required: false },
 });
 
@@ -14,6 +14,16 @@ const TechnologySchema = new mongoose.Schema({
   personal: { type: Boolean, default: false },
   profesional: { type: Boolean, required: false },
   certification: { type: Boolean, required: false },
+});
+
+const Experience = new mongoose.Schema({
+  name: { type: String, required: true },
+  entity: { type: String, required: true },
+  start: { type: Number, required: true },
+  end: { type: Number, required: false },
+  description: { type: String, required: false },
+  country: { type: String, required: false },
+  isRemote: { type: Boolean, required: false },
 });
 
 const freelanceSchema = new Schema({
@@ -90,6 +100,14 @@ const freelanceSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  experience: {
+    type: [Experience],
+    default: [],
+  },
+  gallery: {
+    type: Array,
+    default: [],
+  }
 
 }, { timestamps: true });
 

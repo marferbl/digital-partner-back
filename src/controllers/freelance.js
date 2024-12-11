@@ -44,6 +44,16 @@ exports.deleteFreelance = async (req, res) => {
     }
 }
 
+exports.getFreelanceById = async (req, res) => {
+    try {
+        const freelance = await Freelance.findById(req.params.id).populate('user');
+        res.status(200).send({ success: true, freelance });
+    } catch (error) {
+        res.status(500 || 400).send({ message: 'Something went wrong', error });
+        return { success: false, error };
+    }
+}
+
 
 
 
