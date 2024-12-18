@@ -33,7 +33,6 @@ const freelanceSchema = new Schema({
   },
   country: {
     type: String,
-    unique: true,
     required: true,
   },
   city: {
