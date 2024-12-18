@@ -35,7 +35,7 @@ exports.getAllWithSearchAndFilters = async (req, res) => {
 
 exports.createFreelance = async (req, res) => {
     try {
-        const freelance = await Freelance.create({ user: req.payload._id , ...req.body });
+        const freelance = await Freelance.create({ user: req.payload._id, ...req.body });
         res.status(200).send({ success: true, freelance });
     } catch (error) {
         res.status(500).send({ message: 'Something went wrong', error });
