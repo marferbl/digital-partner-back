@@ -12,4 +12,5 @@ module.exports = (app) => {
   app.use('/image', require('./image.routes'))
   app.use('/event', require('./event.routes'))
   app.use('/blog', require('./blog.routes'))
+  app.use('/reference', require('./reference.routes'))
 };

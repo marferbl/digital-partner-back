@@ -14,7 +14,24 @@ exports.getFreelance = async (req, res) => {
 exports.getAllWithSearchAndFilters = async (req, res) => {
     try {
         const term = req.query.term;
+        const salaryMax = req.query.salaryMax
+        const salaryMin = req.query.salaryMin
+        const position = req.query.job
+        
         let filter = {};
+
+        if (salaryMax && salaryMin) {
+            filter.salary = { $gte: salaryMin, $lte: salaryMax };
+        } else if (salaryMax) {
+            filter.salary = { $lte: salaryMax };
+        } else if (salaryMin) {
+            filter.salary = { $gte: salaryMin };
+        }
+
+        if (position) {
+            filter.job = position;
+        }
+
 
         if (term) {
             filter.$or = [
