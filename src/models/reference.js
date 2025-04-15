@@ -44,8 +44,11 @@ const referenceSchema = new Schema({
     corporateId: {
         type: Schema.Types.ObjectId,
         default: null
+    },
+    finished: {
+        type: Boolean,
+        default: false
     }
-
 },
     { timestamps: true }
 );

@@ -88,7 +88,7 @@ const FEATURES = [
     { value: 'rrhh', label: 'RRHH' },
     { value: 'sellmarketing', label: 'Ventas y marketing' },
     { value: 'finance', label: 'Finanzas y contabilidad' },
-    { value: 'logistics', label: 'Cadena de suministro' },
+    { value: 'logistics', label: 'CSM' },
     { value: 'it', label: 'IT' },
     { value: 'data', label: 'Data' },
     { value: 'law', label: 'Legal' },

@@ -32,7 +32,7 @@ exports.getAllReferencesByEntityId = async (req, res) => {
 
 exports.createReference = async (req, res) => {
     try {
-        const { entity, answers, email } = req.body;
+        const { entity, answers, email, job } = req.body;
         const model = entity.model;
 
         let entityResult = null
@@ -48,7 +48,7 @@ exports.createReference = async (req, res) => {
 
         const corporateId = entityResult.corporate._id;
 
-        const reference = await Reference.create({ entity, answers, email, corporateId });
+        const reference = await Reference.create({ entity, answers, email, corporateId, job });
         res.status(201).json(reference);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -56,15 +56,35 @@ exports.createReference = async (req, res) => {
 }
 
 exports.sendReference = async (req, res) => {
-    const { email, entityId, entityType } = req.body;
+    const { email, entityId, entityType, job } = req.body;
 
     try {
+
         // Fetch the solution name
         const solution = await Solution.findById(entityId);
+        const entity = {
+            itemId: entityId,
+            model: entityType
+        }
 
         if (!solution) {
             return res.status(404).json({ status: 404, message: 'La solución no fue encontrada.' });
         }
+
+        let entityResult = null
+
+        if (entityType === 'solution') {
+            entityResult = await Solution
+                .findById(entity.itemId).populate('corporate');
+        } else {
+            entityResult = await Service
+                .findById(entity.itemId).populate('corporate');
+        }
+
+
+        const corporateId = entityResult.corporate._id;
+
+        const reference = await Reference.create({ entity, answers: [], email, corporateId, job, finished: false });
 
         // Configure the transporter
         const transporter = nodemailer.createTransport({
@@ -93,7 +113,7 @@ exports.sendReference = async (req, res) => {
                 </p>
                 <p>
                   <a 
-                    href="https://www.digitalando.org//reference-answer/${entityId}?entityType=${entityType}&email=${encodeURIComponent(email)}" 
+                    href="https://www.digitalando.org//reference-answer/${reference._id}?entityType=${entityType}&email=${encodeURIComponent(email)}" 
                     style="color: #007BFF; text-decoration: none; font-weight: bold;">
                     Completar referencia
                   </a>
@@ -102,7 +122,7 @@ exports.sendReference = async (req, res) => {
                   O haz click en el siguiente enlace
                 </p>
                 <p style="background: #f9f9f9; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                  https://www.digitalando.org//reference-answer/${entityId}?entityType=${entityType}&email=${encodeURIComponent(email)}
+                  https://www.digitalando.org//reference-answer/${reference._id}?entityType=${entityType}&email=${encodeURIComponent(email)}
                 </p>
                 <p>
                   Gracias,<br>
@@ -122,11 +142,41 @@ exports.sendReference = async (req, res) => {
             }
         });
 
-        res.status(200).json({ status: 200, message: 'Correo enviado exitosamente.' });
+        res.status(200).json({ status: 200, message: 'Correo enviado exitosamente.', reference: reference });
     } catch (error) {
         console.error('Error en el proceso:', error.message);
         res.status(500).json({ status: 500, message: 'Error al enviar el correo.', error: error.message });
     }
 };
 
+exports.finishReference = async (req, res) => {
+    const { id, answers, job, companyName, contactName } = req.body;
+
+    try {
+        const reference = await Reference
+            .findByIdAndUpdate(id, { finished: true, answers: answers, companyName, contactName, job }, { new: true });
+
+        if (!reference) {
+            return res.status(403).json({ status: 404, message: 'La referencia no fue encontrada.' });
+        }
+
+        res.status(200).json({ status: 200, message: 'Referencia completada exitosamente.', reference: reference });
+    } catch (error) {
+        console.error('Error en el proceso:', error.message);
+        res.status(500).json({ status: 500, message: 'Error al completar la referencia.', error: error.message });
+    }
+};
+
+exports.getReferencesByEntityDetail = async (req, res) => {
+    try {
+        const { entityId, entityName } = req.query;
+
+        console.log(entityId, entityName)
+        const references = await Reference.find({ finished: true, 'entity.itemId': entityId, 'entity.model': entityName });
+
+        res.status(200).json({ success: true, references: references });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
