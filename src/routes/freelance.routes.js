@@ -22,6 +22,11 @@ router.get("/details/:id", async (req, res) => {
     freelanceController.getFreelanceById(req, res);
 });
 
+router.get("/talents", async (req, res) => {
+    const results = await freelanceController.getAllWithSearchAndFilters(req, res);
+    res.status(200).send(results);
+});
+
 
 
 

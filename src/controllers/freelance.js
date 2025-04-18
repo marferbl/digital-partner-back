@@ -13,11 +13,14 @@ exports.getFreelance = async (req, res) => {
 
 exports.getAllWithSearchAndFilters = async (req, res) => {
     try {
+        console.log(req.query)
         const term = req.query.term;
         const salaryMax = req.query.salaryMax
         const salaryMin = req.query.salaryMin
         const position = req.query.job
-        
+        const city = req.query.city
+        const country = req.query.country
+
         let filter = {};
 
         if (salaryMax && salaryMin) {
@@ -31,6 +34,12 @@ exports.getAllWithSearchAndFilters = async (req, res) => {
         if (position) {
             filter.job = position;
         }
+        if (city) {
+            filter.city = city;
+        }
+        if (country) {
+            filter.country = country;
+        }
 
 
         if (term) {
@@ -42,7 +51,9 @@ exports.getAllWithSearchAndFilters = async (req, res) => {
                 { technologies: { $elemMatch: { name: { $regex: term, $options: 'i' } } } },
             ];
         }
+
         const results = await Freelance.find(filter).populate('user');
+        console.log(filter, 'filter', results)
         return results;
     } catch (error) {
         res.status(500 || 400).send({ message: 'Something went wrong', error });
