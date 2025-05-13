@@ -13,6 +13,7 @@ module.exports = (app) => {
   app.use('/event', require('./event.routes'))
   app.use('/blog', require('./blog.routes'))
   app.use('/reference', require('./reference.routes'))
+  app.use('/entity-plans', require('./entity-plan.routes'))
 };
 
 
