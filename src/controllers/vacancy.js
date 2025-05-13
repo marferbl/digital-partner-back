@@ -24,6 +24,7 @@ exports.getVacanciesByCorporateId = async (req, res) => {
 exports.createVacancy = async (req, res) => {
     try {
         const vacancy = await Vacancy.create({ ...req.body });
+        const vacancyCandidates = await VacancyCandidates.create({ vacancy: vacancy._id, discardedCandidates: [], selectedCandidates: [] });
         res.status(200).send({ success: true, vacancy });
     } catch (error) {
         res.status(500).send({ message: "Something went wrong", error });
