@@ -42,7 +42,8 @@ exports.createSolution = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.payload._id });
         const corporate = await Corporate.findOne({ superadmin: user.id });
-        const solution = await Solution.create({ corporate, ...req.body });
+        const solution = await Solution.create({ corporate, lastPayment: new Date(), ...req.body });
+
         res.status(200).send({ success: true, solution });
     } catch (error) {
         res.status(500 || 400).send({ message: 'Something went wrong', error });

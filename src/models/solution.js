@@ -58,6 +58,10 @@ const solutionSchema = new Schema({
         type: Array,
         default: []
     },
+    lastPayment: {
+        type: Date,
+        default: null
+    }
 
 
 

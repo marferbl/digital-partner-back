@@ -13,23 +13,23 @@ const serviceSchema = new Schema({
   },
   languages: {
     type: [String],
-    required: true,
+    required: false,
   },
   countries: {
     type: [String],
-    required: true,
+    required: false,
   },
   web: {
     type: String,
-    required: true,
+    required: false,
   },
   serviceType: {
     type: String,
-    required: true,
+    required: false,
   },
   partnerType: {
     type: [String],
-    required: true,
+    required: false,
   },
   solutionId: {
     type: Schema.Types.ObjectId,
@@ -53,6 +53,10 @@ const serviceSchema = new Schema({
   logo: {
     type: String,
     default: ''
+  },
+  lastPayment: {
+    type: Date,
+    default: null
   }
 },
   { timestamps: true }

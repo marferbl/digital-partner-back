@@ -1,6 +1,6 @@
 # [START app_yaml]
 
-runtime: nodejs18
+runtime: nodejs20
 
 service: default
 
