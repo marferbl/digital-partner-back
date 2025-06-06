@@ -63,18 +63,13 @@ exports.deleteEntityPlan = async (req, res) => {
 
 exports.getEntityPlansByEntityId = async (req, res) => {
     try {
-        console.log('Query params:', {
-            model: req.params.model,
-            id: req.params.id,
-            convertedId: new mongoose.Types.ObjectId(req.params.id)
-        });
+
         const entityPlans = await EntityPlan.find({
             entity: {
                 model: req.params.model,
                 itemId: new mongoose.Types.ObjectId(req.params.id)
             }
         });
-        console.log("Found entity plans:", entityPlans);
         res.status(200).send({ success: true, entityPlans });
     } catch (error) {
         console.error('Error in getEntityPlansByEntityId:', error);

@@ -19,6 +19,7 @@ exports.getAllEventsFilter = async (req, res) => {
         const minPrice = parseFloat(req.query.min);
         const maxPrice = parseFloat(req.query.max);
         const type = req.query.eventType;
+        const city = req.query.city;
 
         let filter = {};
 
@@ -28,6 +29,10 @@ exports.getAllEventsFilter = async (req, res) => {
                 { description: { $regex: term, $options: 'i' } },
                 { link: { $regex: term, $options: 'i' } },
             ];
+        }
+
+        if (city) {
+            filter.city = city;
         }
 
         if (lineType) {
@@ -116,7 +121,7 @@ exports.deleteEvent = async (req, res) => {
 }
 
 exports.getEventsByCorporate = async (req, res) => {
-
+    console.log(req.payload);
     const corporateById = await Corporate.findOne({ superadmin: req.payload._id });
     try {
         const events = await Event.find({ corporate: corporateById._id }).populate('corporate');
@@ -142,5 +147,17 @@ exports.getEvent = async (req, res) => {
         res.status(500).send({ success: false, error });
     }
 }
+
+exports.getDistinctCities = async (req, res) => {
+    try {
+        const cities = await Event.distinct('city');
+        res.status(200).send({ success: true, cities });
+    } catch (error) {
+        console.error('Error fetching distinct cities:', error);
+        res.status(500).send({ success: false, error });
+    }
+}
+
+
 
 

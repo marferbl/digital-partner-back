@@ -118,7 +118,6 @@ router.post("/login", (req, res, next) => {
         res.status(401).json({ message: "User not found." });
         return;
       }
-      console.log(email, foundUser)
       if (bcrypt.compareSync(password, foundUser.password)) {
         const { _id, email, name, avatar } = foundUser;
 
@@ -172,10 +171,8 @@ router.post(
         },
         { new: true }
       );
-      console.log(result, user);
       res.status(200).json(user);
     } catch (error) {
-      console.log(error);
       res.status(500).send(error);
     }
   }
@@ -200,7 +197,6 @@ router.get("/me", isAuthenticated, async (req, res, next) => {
     if (corporate) {
       userResponse.corporate = corporate;
     }
-    console.log(corporate)
 
     res.status(200).send(userResponse);
   } catch (error) {

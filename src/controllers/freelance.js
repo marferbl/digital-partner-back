@@ -13,7 +13,6 @@ exports.getFreelance = async (req, res) => {
 
 exports.getAllWithSearchAndFilters = async (req, res) => {
     try {
-        console.log(req.query)
         const term = req.query.term;
         const salaryMax = req.query.salaryMax
         const salaryMin = req.query.salaryMin
@@ -53,7 +52,6 @@ exports.getAllWithSearchAndFilters = async (req, res) => {
         }
 
         const results = await Freelance.find(filter).populate('user');
-        console.log(filter, 'filter', results)
         return results;
     } catch (error) {
         res.status(500 || 400).send({ message: 'Something went wrong', error });

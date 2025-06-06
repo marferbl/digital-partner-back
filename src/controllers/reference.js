@@ -171,7 +171,6 @@ exports.getReferencesByEntityDetail = async (req, res) => {
     try {
         const { entityId, entityName } = req.query;
 
-        console.log(entityId, entityName)
         const references = await Reference.find({ finished: true, 'entity.itemId': entityId, 'entity.model': entityName });
 
         res.status(200).json({ success: true, references: references });

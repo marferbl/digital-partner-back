@@ -24,9 +24,15 @@ router.get('/events-by-corporate', isAuthenticated, async (req, res) => {
     eventController.getEventsByCorporate(req, res);
 });
 
+router.get('/cities/events', async (req, res) => {
+    eventController.getDistinctCities(req, res);
+});
+
 router.get('/:id', async (req, res) => {
     eventController.getEvent(req, res);
 });
+
+
 
 module.exports = router;
 
