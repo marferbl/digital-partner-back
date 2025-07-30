@@ -10,6 +10,10 @@ const entityPlanSchema = new Schema({
         type: Number,
         required: true,
     },
+    endPrice: {
+        type: Number,
+        required: false,
+    },
     period: {
         type: String,
         required: true,

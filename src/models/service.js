@@ -46,6 +46,10 @@ const serviceSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Corporate",
   },
+  gallery: {
+    type: Array,
+    default: []
+  },
   lineType: {
     type: String,
     default: 'services'

@@ -20,6 +20,8 @@ exports.getAllEventsFilter = async (req, res) => {
         const maxPrice = parseFloat(req.query.max);
         const type = req.query.eventType;
         const city = req.query.city;
+        const from = req.query.from;
+        const to = req.query.to;
 
         let filter = {};
 
@@ -38,6 +40,18 @@ exports.getAllEventsFilter = async (req, res) => {
         if (lineType) {
             filter.lineType = lineType;
         }
+
+        // Date range filter
+        if (from || to) {
+            filter.date = {};
+            if (from) {
+                filter.date.$gte = new Date(from);
+            }
+            if (to) {
+                filter.date.$lte = new Date(to);
+            }
+        }
+
         if (!isNaN(minPrice) || !isNaN(maxPrice)) {
             filter.price = {};
             if (!isNaN(minPrice)) {
