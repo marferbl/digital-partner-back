@@ -42,6 +42,9 @@ exports.getAllEventsFilter = async (req, res) => {
         }
 
         // Date range filter
+        if (!from) {
+            filter.date = { $gte: new Date() };
+        }
         if (from || to) {
             filter.date = {};
             if (from) {
