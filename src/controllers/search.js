@@ -12,17 +12,18 @@ exports.getAllItems = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
     const startIndex = (page - 1) * limit;
-    const solutions = await solutionController.getAllSolutionsFilter(req, res) || [];
-    const services = await serviceController.getAllServicesFilter(req, res) || [];
-    const events = await eventController.getAllEventsFilter(req, res) || [];
-    const freelancers = await freelanceController.getAllWithSearchAndFilters(req, res) || [];
 
     let results = []
 
-    if (req.query.lineType === 'freelance') {
-        results = freelancers;
+    // if (req.query.lineType === 'freelance') {
+    //     results = await freelanceController.getAllWithSearchAndFilters(req, res) || [];
+    // } else
+    if (req.query.lineType === 'services') {
+        results = await serviceController.getAllServicesFilter(req, res) || [];
+    } else if (req.query.lineType === 'solutions') {
+        results = await solutionController.getAllSolutionsFilter(req, res) || [];
     } else {
-        results = [...solutions, ...services, ...events]
+        results = await eventController.getAllEventsFilter(req, res) || [];
     }
 
     const totalResults = results.length;

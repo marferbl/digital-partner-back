@@ -61,8 +61,19 @@ const solutionSchema = new Schema({
     lastPayment: {
         type: Date,
         default: null
+    },
+    deployment: {
+        type: Array,
+        default: []
+    },
+    integration: {
+        type: Array,
+        default: []
+    },
+    support: {
+        type: Array,
+        default: []
     }
-
 
 
 });

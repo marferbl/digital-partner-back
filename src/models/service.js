@@ -61,6 +61,10 @@ const serviceSchema = new Schema({
   lastPayment: {
     type: Date,
     default: null
+  },
+  hiring: {
+    type: String,
+    required: false,
   }
 },
   { timestamps: true }

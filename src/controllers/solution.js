@@ -97,6 +97,11 @@ exports.getAllSolutionsFilter = async (req, res) => {
         const lineType = req.query.lineType;
         const isErp = req.query.isErp;
         const specifyFeatures = req.query.specifyFeatures;
+        const deployment = req.query.deployment;
+        const integration = req.query.integration;
+        const support = req.query.support;
+        const orderBy = req.query.orderBy || 'createdAt';
+        const orderValue = req.query.orderValue || 'desc';
 
 
         let filter = {};
@@ -136,6 +141,14 @@ exports.getAllSolutionsFilter = async (req, res) => {
             filter.specifyFeatures = { $in: specifyFeatures };
         }
 
+        if (deployment) {
+            filter.deployment = { $in: deployment };
+        }
+
+        if (integration) {
+            filter.integration = { $in: integration };
+        }
+
 
 
         if (isErp !== undefined) {
@@ -144,14 +157,19 @@ exports.getAllSolutionsFilter = async (req, res) => {
             }
         }
 
-        const solutions = await Solution.find({ ...filter });
+        // Create sort object
+        const sortOrder = orderValue === 'asc' ? 1 : -1;
+        const sortObject = {};
+        sortObject[orderBy] = sortOrder;
+
+        const solutions = await Solution.find({ ...filter }).sort(sortObject);
         return solutions;
 
         // res.status(200).send({ success: true, solutions });
     } catch (error) {
-        res.status(500).send({ success: false, message: 'Something went wrong', error });
+        res.status(500).send
     }
-};
+}
 
 exports.getAllSolutionsFilterFunction = async (features, specifyFeatures) => {
     try {

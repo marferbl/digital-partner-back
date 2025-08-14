@@ -22,6 +22,8 @@ exports.getAllEventsFilter = async (req, res) => {
         const city = req.query.city;
         const from = req.query.from;
         const to = req.query.to;
+        const orderBy = req.query.orderBy || 'createdAt';
+        const orderValue = req.query.orderValue || 'desc';
 
         let filter = {};
 
@@ -65,25 +67,18 @@ exports.getAllEventsFilter = async (req, res) => {
             }
         }
         if (type) {
-            if (type === 'remote') {
-                filter.type = { $in: ['remote'] }
-            }
-            if (type === 'presential') {
-                filter.type = { $in: ['presential'] }
-            }
-            if (type === 'all') {
-                filter.type = {
-                    $in: ['remote', 'presential']
-                }
-            }
-
+            filter.type = type;
         }
 
+        // Create sort object
+        const sortOrder = orderValue === 'asc' ? 1 : -1;
+        const sortObject = {};
+        sortObject[orderBy] = sortOrder;
 
-        const events = await Event.find({ ...filter }).populate(['corporate'])
+        const events = await Event.find({ ...filter }).populate(['corporate']).sort(sortObject);
         return events;
 
-        // res.status(200).send({ success: true, services });
+        // res.status(200).send({ success: true, events });
     } catch (error) {
         res.status(500).send({ success: false, message: 'Something went wrong', error });
     }

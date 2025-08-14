@@ -104,6 +104,8 @@ exports.getAllServicesFilter = async (req, res) => {
         const countries = req.query.countries;
         const lineType = req.query.lineType;
         const serviceType = req.query.serviceType;
+        const orderKey = req.query.orderBy === 'name' ? 'title' : 'createdAt';
+        const orderValue = req.query.orderValue || 'desc';
 
         let filter = {};
 
@@ -135,7 +137,12 @@ exports.getAllServicesFilter = async (req, res) => {
             filter.countries = { $in: countries }; // Wrap the string in an array to use $in
         }
 
-        const services = await Service.find({ ...filter }).populate(['solutionId', 'corporate'])
+        // Create sort object
+        const sortOrder = orderValue === 'asc' ? 1 : -1;
+        const sortObject = {};
+        sortObject[orderKey] = sortOrder;
+
+        const services = await Service.find({ ...filter }).populate(['solutionId', 'corporate']).sort(sortObject);
         return services;
 
         // res.status(200).send({ success: true, services });
